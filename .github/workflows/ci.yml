@@ -1,4 +1,4 @@
-name: AgriData Platform CI
+﻿name: AgriData Platform CI
 
 on:
   push:
