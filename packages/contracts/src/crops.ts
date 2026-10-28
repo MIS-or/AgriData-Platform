@@ -8,6 +8,7 @@ export const CropCodeSchema = z.enum([
 ]);
 
 export type CropCode = z.infer<typeof CropCodeSchema>;
+export type PilotCropCode = CropCode;
 
 export interface CropMetadata {
   code: CropCode;
@@ -67,6 +68,8 @@ export const CROP_DICTIONARY: Record<CropCode, CropMetadata> = {
     temperatureRangeCelsius: [18, 28],
   },
 };
+
+export const PILOT_CROPS: CropMetadata[] = Object.values(CROP_DICTIONARY);
 
 /**
  * Phân giải tên nông sản thô từ chợ (hỗ trợ tên chứa ghi chú như 'Cải thìa (loại 1)', 'Dưa leo miền Tây')
