@@ -1,0 +1,22 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="48" fill="#064E3B" />
+  <!-- Sprout Leaves -->
+  <path d="M 50 78 C 50 50, 20 45, 22 28 C 38 28, 48 42, 50 78 Z" fill="url(#leafGrad)" />
+  <path d="M 50 78 C 50 50, 80 45, 78 28 C 62 28, 52 42, 50 78 Z" fill="url(#leafGrad)" />
+  <!-- Central Data Growth Stem -->
+  <circle cx="50" cy="22" r="6" fill="url(#goldGrad)" />
+  <circle cx="36" cy="40" r="4" fill="url(#goldGrad)" />
+  <circle cx="64" cy="40" r="4" fill="url(#goldGrad)" />
+  <line x1="50" y1="28" x2="50" y2="78" stroke="#A7F3D0" stroke-width="3" stroke-linecap="round"/>
+</svg>

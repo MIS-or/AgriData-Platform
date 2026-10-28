@@ -1,4 +1,4 @@
-﻿# Dependencies
+# Dependencies
 node_modules/
 .pnpm-store/
 
@@ -8,10 +8,34 @@ build/
 .output/
 .wrangler/
 
-# Environment variables
+# Environment variables & secrets (ONLY root /.env.example is tracked)
 .env
 .env.*
-!.env.example
+**/.env
+**/.env.*
+!/.env.example
+.dev.vars
+.dev.vars.*
+**/.dev.vars
+**/.dev.vars.*
+*.local
+*.local.env
+
+# Credentials, Keys & Private Certificates
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+id_rsa*
+id_ecdsa*
+id_ed25519*
+secrets.json
+credentials.json
+
+# Cloudflare Wrangler local state & overrides
+wrangler.toml.local
 
 # Logs
 logs/
