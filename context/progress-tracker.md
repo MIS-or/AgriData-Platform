@@ -145,3 +145,5 @@
 | **Modular Monolith Boundaries** | `COMPLETED` | Tái cấu trúc `apps/api/src/modules/*` thành 6 Bounded Contexts độc lập (`ingestion`, `data-quality`, `market-intelligence`, `farmer-advisory`, `field-experiment`, `platform-ops`) + `core` |
 | **Automated Boundary & Secret Scanner** | `COMPLETED` | `scripts/verify-architecture.mjs` tích hợp trực tiếp vào `pnpm test` và CI/CD |
 | **Multi-Stage Docker & CI/CD Pipeline** | `COMPLETED` | `Dockerfile` (6 stages), `docker-compose.yml` (Postgres 16 3-Tier Warehouse + API + Web + Test Runner), `.dockerignore`, `.github/workflows/ci.yml` |
+| **Purposeful Cloudflare Free Tier Suite (6 Core Services)** | `COMPLETED` | Tích hợp trực tiếp `Pages`, `Workers + Cron`, `D1 SQL` (`5b8d0b56...`), `Workers KV` (`e694b8d2...`), `R2 Vault`, `Hyperdrive + Turnstile` vào các route G1-G7 |
+| **UI/UX Pro Max Enterprise Redesign & Live Neon 3-Tier DB Sync** | `COMPLETED` | Thiết kế chuẩn Cloudflare/Linear (`Plus Jakarta Sans` + `Inter` + `JetBrains Mono tabular-nums`), kết nối trực tiếp `neon-client.ts` (`plain-haze-17315607`) đồng bộ 2 chiều API ↔ Neon DB ↔ Frontend |

@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { aggregateCleanPricesToMarts, CleanPriceInput } from '../application/marts-aggregator.js';
 import { Env } from '../../../core/config/env.js';
 import { edgeKvGet, edgeKvPut } from '../../../core/cloudflare/edge-services.js';
+import { queryWeeklyMartsFromWarehouse } from '../../../core/database/neon-client.js';
 
 export const martsRouter = new Hono<{ Bindings: Env }>();
 
@@ -9,14 +10,34 @@ export const martsRouter = new Hono<{ Bindings: Env }>();
 martsRouter.get('/weekly', async (c) => {
   const crop = c.req.query('crop') || 'bok_choy';
   const region = c.req.query('region') || 'vung_1_an_phu_tan';
+  const forceRefresh = c.req.query('refresh') === 'true';
   const cacheKey = `marts:weekly:${crop}:${region}`;
 
   // [Goal G4 & X6] Serve aggregated Tier-3 Weekly Marts from Cloudflare Workers KV Edge Cache (< 1ms)
-  const cachedJson = await edgeKvGet(c.env, cacheKey);
-  if (cachedJson) {
+  if (!forceRefresh) {
+    const cachedJson = await edgeKvGet(c.env, cacheKey);
+    if (cachedJson) {
+      return c.json({
+        ...JSON.parse(cachedJson),
+        cacheHit: true,
+      });
+    }
+  }
+
+  // Query live Tier-3 Neon PostgreSQL Data Warehouse if configured
+  const warehouseResult = await queryWeeklyMartsFromWarehouse(c.env, crop, region);
+  if (warehouseResult.source !== 'EDGE_FALLBACK' && warehouseResult.marts.length > 0) {
+    const payload = {
+      cropCode: crop,
+      regionCode: region,
+      totalWeeks: warehouseResult.marts.length,
+      dataSource: warehouseResult.source,
+      marts: warehouseResult.marts,
+    };
+    await edgeKvPut(c.env, cacheKey, JSON.stringify(payload), 3600);
     return c.json({
-      ...JSON.parse(cachedJson),
-      cacheHit: true,
+      ...payload,
+      cacheHit: false,
     });
   }
 
@@ -39,6 +60,7 @@ martsRouter.get('/weekly', async (c) => {
     cropCode: crop,
     regionCode: region,
     totalWeeks: marts.length,
+    dataSource: warehouseResult.source,
     marts,
   };
 

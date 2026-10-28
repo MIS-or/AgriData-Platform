@@ -5,6 +5,7 @@ import {
   edgeR2PutImmutableObject,
   verifyTurnstileToken,
 } from '../../../core/cloudflare/edge-services.js';
+import { insertRawFarmerLogInWarehouse } from '../../../core/database/neon-client.js';
 
 export const ingestRouter = new Hono<{ Bindings: Env }>();
 
@@ -41,18 +42,28 @@ ingestRouter.post('/farmer-log', async (c) => {
 
     const logId = `log_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
-    // [Goal G1 & X1] Archive immutable Tier-1 raw payload into Cloudflare R2 (Zero Egress, saves Neon 0.5GB DB)
-    const r2Archive = await edgeR2PutImmutableObject(
-      c.env,
-      `raw/farmer-logs/${logId}.json`,
-      JSON.stringify({ logId, ...validatedLog })
-    );
+    // [Goal G1 & X1] Archive immutable Tier-1 raw payload into Cloudflare R2 + Neon PostgreSQL Tier-1 Raw Table
+    const [r2Archive, warehouseInsert] = await Promise.all([
+      edgeR2PutImmutableObject(
+        c.env,
+        `raw/farmer-logs/${logId}.json`,
+        JSON.stringify({ logId, ...validatedLog })
+      ),
+      insertRawFarmerLogInWarehouse(
+        c.env,
+        'htx_an_phu_tan',
+        { logId, ...validatedLog, breakevenVndPerKg },
+        logId.replace(/[^a-zA-Z0-9]/g, '').padEnd(64, 'a')
+      ),
+    ]);
 
     return c.json({
       success: true,
       logId,
       calculatedBreakevenPriceVndPerKg: breakevenVndPerKg,
       rawArchiveKey: r2Archive.key,
+      warehouseRecordId: warehouseInsert.rawRecordId,
+      warehouseSource: warehouseInsert.source,
       message: 'Nhật ký vụ mùa đã được ghi nhận vào kho dữ liệu sạch lớp 1 và lưu trữ bất biến trên R2.',
       timestamp: new Date().toISOString(),
       summary: {

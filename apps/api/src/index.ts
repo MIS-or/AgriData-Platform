@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { CROP_DICTIONARY, CropCode } from '@agridata/contracts';
 import { Env, resolveEnvSecret } from './core/config/env.js';
+import { getWarehouseSyncOverview } from './core/database/neon-client.js';
+import { auditCloudflareFreeTierSuite } from './core/cloudflare/edge-services.js';
 
 // Import strictly through each Bounded Context's Public Facade (`./modules/<module>/index.js`)
 import { sourcesRouter, ingestRouter, fetchOpenMeteoWeather } from './modules/ingestion/index.js';
@@ -29,7 +31,7 @@ app.use('*', async (c, next) => {
 app.use('*', cors({
   origin: '*',
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
+  allowHeaders: ['Content-Type', 'Authorization', 'x-turnstile-token'],
   exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
   maxAge: 86400,
 }));
@@ -51,7 +53,7 @@ app.notFound((c) => {
     success: false,
     error: 'Endpoint Not Found',
     path: c.req.path,
-    documentation: 'https://github.com/Joyce/AgriData-Platform/docs',
+    documentation: 'https://github.com/MIS-or/AgriData-Platform/docs',
   }, 404);
 });
 
@@ -76,6 +78,19 @@ app.route('/api/v1/models', modelsRouter);
 app.route('/api/v1/farmer', farmerRouter);
 app.route('/api/v1/field', fieldAuditRouter);
 app.route('/api/v1/ops', operationsRouter);
+
+// Unified Real-Time Warehouse & Cloudflare Edge Sync Endpoint for Web UI
+app.get('/api/v1/sync/overview', async (c) => {
+  const warehouse = await getWarehouseSyncOverview(c.env);
+  const cloudflareSuite = auditCloudflareFreeTierSuite(c.env);
+
+  return c.json({
+    success: true,
+    warehouse,
+    cloudflareSuite,
+    crops: Object.values(CROP_DICTIONARY),
+  });
+});
 
 // Endpoint trả về từ điển cây trồng thí điểm
 app.get('/api/v1/crops', (c) => {
