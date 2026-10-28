@@ -3,6 +3,7 @@ import {
   CROP_DICTIONARY,
   CropCode,
 } from '@agridata/contracts';
+import { AnalyticsDashboard } from './features/dashboard/AnalyticsDashboard.js';
 
 export default function App() {
   const [viewMode, setViewMode] = useState<'farmer' | 'dashboard'>('farmer');
@@ -90,7 +91,9 @@ export default function App() {
       {/* Main Content Area */}
       <main style={{ flex: 1, padding: '20px', maxWidth: viewMode === 'farmer' ? '500px' : '1100px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
         {viewMode === 'farmer' ? (
-          /* FARMER MOBILE PWA VIEW (GATE G5) */
+          /* ========================================================== */
+          /* FARMER MOBILE PWA VIEW (GATE G5)                            */
+          /* ========================================================== */
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{
               backgroundColor: '#ECFDF5',
@@ -232,85 +235,10 @@ export default function App() {
             </div>
           </div>
         ) : (
-          /* ANALYST DASHBOARD VIEW (GATE G4) */
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h2 style={{ margin: 0, fontSize: '20px', color: '#111827' }}>Bảng Điều Khiển Dữ Liệu Thị Trường</h2>
-                <span style={{ fontSize: '13px', color: '#6B7280' }}>Dữ liệu đồng bộ từ Chợ Đầu Mối Bình Điền & Thủ Đức lúc 04:00 AM</span>
-              </div>
-              <span style={{ backgroundColor: '#D1FAE5', color: '#065F46', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>
-                🟢 3/3 Nguồn Đang Hoạt Động (G1 OK)
-              </span>
-            </div>
-
-            {/* Metrics Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-              <div style={{ backgroundColor: '#FFFFFF', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-                <div style={{ fontSize: '12px', color: '#6B7280' }}>Chợ Đầu Mối Bình Điền (Cải thìa)</div>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: '6px 0' }}>12.500 đ/kg</div>
-                <div style={{ fontSize: '12px', color: '#059669' }}>▲ +4.2% so với tuần trước</div>
-              </div>
-              <div style={{ backgroundColor: '#FFFFFF', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-                <div style={{ fontSize: '12px', color: '#6B7280' }}>Chợ Đầu Mối Thủ Đức (Cải ngọt)</div>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: '6px 0' }}>11.800 đ/kg</div>
-                <div style={{ fontSize: '12px', color: '#DC2626' }}>▼ -1.5% so với tuần trước</div>
-              </div>
-              <div style={{ backgroundColor: '#FFFFFF', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-                <div style={{ fontSize: '12px', color: '#6B7280' }}>Ước tính sản lượng 4 tuần tới</div>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: '6px 0' }}>185 Tấn</div>
-                <div style={{ fontSize: '12px', color: '#059669' }}>Trong ngưỡng an toàn hấp thụ</div>
-              </div>
-              <div style={{ backgroundColor: '#FFFFFF', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-                <div style={{ fontSize: '12px', color: '#6B7280' }}>Độ phủ dải dự báo 80% (G3)</div>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#047857', margin: '6px 0' }}>81.4%</div>
-                <div style={{ fontSize: '12px', color: '#059669' }}>Đạt tiêu chuẩn Cổng G3 (72%-88%)</div>
-              </div>
-            </div>
-
-            {/* Sample Table for Clean Data */}
-            <div style={{ backgroundColor: '#FFFFFF', borderRadius: '12px', padding: '16px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '15px', color: '#374151' }}>Bảng Giá Chuẩn Hóa Lớp 2 (Clean Data Layer - VND/kg)</h3>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#F9FAFB', borderBottom: '1px solid #E5E7EB' }}>
-                    <th style={{ padding: '8px' }}>Mã Cây</th>
-                    <th style={{ padding: '8px' }}>Tên Cây</th>
-                    <th style={{ padding: '8px' }}>Thị Trường</th>
-                    <th style={{ padding: '8px' }}>Giá Sạch (VNĐ/kg)</th>
-                    <th style={{ padding: '8px' }}>Đơn Vị Gốc</th>
-                    <th style={{ padding: '8px' }}>Trạng Thái MAD</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: '1px solid #F3F4F6' }}>
-                    <td style={{ padding: '8px' }}><code>bok_choy</code></td>
-                    <td style={{ padding: '8px' }}>Cải thìa</td>
-                    <td style={{ padding: '8px' }}>Bình Điền</td>
-                    <td style={{ padding: '8px', fontWeight: 'bold' }}>12.500 đ</td>
-                    <td style={{ padding: '8px' }}>1.250.000 đ / tạ</td>
-                    <td style={{ padding: '8px', color: '#059669' }}>Hợp lệ (Z=0.4)</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #F3F4F6' }}>
-                    <td style={{ padding: '8px' }}><code>choi_sum</code></td>
-                    <td style={{ padding: '8px' }}>Cải ngọt</td>
-                    <td style={{ padding: '8px' }}>Thủ Đức</td>
-                    <td style={{ padding: '8px', fontWeight: 'bold' }}>11.800 đ</td>
-                    <td style={{ padding: '8px' }}>118.000 đ / yến</td>
-                    <td style={{ padding: '8px', color: '#059669' }}>Hợp lệ (Z=0.8)</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '8px' }}><code>cucumber</code></td>
-                    <td style={{ padding: '8px' }}>Dưa leo</td>
-                    <td style={{ padding: '8px' }}>Hóc Môn</td>
-                    <td style={{ padding: '8px', fontWeight: 'bold' }}>7.200 đ</td>
-                    <td style={{ padding: '8px' }}>14.400 đ / chục</td>
-                    <td style={{ padding: '8px', color: '#D97706' }}>Cảnh báo thấp (Z=-2.1)</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          /* ========================================================== */
+          /* ANALYST DASHBOARD VIEW (GATE G4: 7 SPECIALIZED SCREENS)     */
+          /* ========================================================== */
+          <AnalyticsDashboard />
         )}
       </main>
 

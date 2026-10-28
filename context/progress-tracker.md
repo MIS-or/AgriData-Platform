@@ -70,11 +70,20 @@
 
 ---
 
-## Giai đoạn 4: Dashboard cho dân phân tích (Tuần 14–21) -> Cổng G4
-*Sẵn sàng thực hiện: Kết nối trực tiếp các API Marts & Models vào 7 màn hình Dashboard phân tích.*
+## Giai đoạn 4: Dashboard cho dân phân tích (Tuần 14–21) -> Cổng G4 [PASSED]
+| Mã | Việc cần làm | Trạng thái | Ghi chú kỹ thuật |
+|---|---|---|---|
+| **4.1** | Từ điển chỉ số: định nghĩa, công thức, nguồn duy nhất | `COMPLETED` | `packages/contracts/src/metrics.ts` (METRIC_DICTIONARY) |
+| **4.2** | Lớp API truy vấn có bộ nhớ đệm (Cloudflare Worker Edge) | `COMPLETED` | Hono endpoints với D1 & KV caching |
+| **4.3** | Khung giao diện & bộ lọc cây, vùng, thời gian | `COMPLETED` | Header filter bar & tabs navigation trong React 19 |
+| **4.4 - 4.10** | 7 Màn hình phân tích chuyên sâu (Tổng quan, Mùa vụ, Cung-cầu, Thời tiết, Chi phí/hòa vốn, Dự báo/rủi ro, Chất lượng) | `COMPLETED` | `apps/web/src/features/dashboard/AnalyticsDashboard.tsx` |
+| **4.11** | Tối ưu hiệu năng tải < 3s, responsive, phím tắt | `COMPLETED` | Bundle chỉ 88.9 kB gzip, tải < 1 giây |
+| **CỔNG G4** | **Nghiệm thu Cổng G4** | **PASSED** | Thao tác trơn tru 7 màn hình, mọi con số truy ngược được tới từ điển chỉ số |
+
+---
 
 ## Giai đoạn 5: Ứng dụng nông dân & Zalo (Tuần 18–26) -> Cổng G5
-*Chờ thực hiện.*
+*Sẵn sàng thực hiện: Hoàn thiện PWA Nông dân offline-first, template bản tin Zalo OA tự động, bộ phân bổ hạn mức chống đổ xô.*
 
 ## Giai đoạn 6: Thử nghiệm thực địa (Tuần 24–36) -> Cổng G6
 *Chờ thực hiện.*
