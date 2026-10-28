@@ -1,0 +1,36 @@
+﻿# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build artifacts
+dist/
+build/
+.output/
+.wrangler/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+
+# Python / uv (if any scripts used)
+.venv/
+__pycache__/
+*.pyc

@@ -1,0 +1,30 @@
+name: AgriData Platform CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: 7-Layer Test & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile=false
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Run Unit & Business Layer Tests (Layer 1-3)
+        run: pnpm test

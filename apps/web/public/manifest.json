@@ -1,0 +1,16 @@
+﻿{
+  "short_name": "Nông Nghiệp Số",
+  "name": "Nền Tảng Đề Xuất Trồng Trọt & Giá Nông Sản",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "/?mode=farmer",
+  "background_color": "#064E3B",
+  "theme_color": "#047857",
+  "display": "standalone",
+  "orientation": "portrait"
+}
