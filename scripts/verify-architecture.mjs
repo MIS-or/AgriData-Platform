@@ -59,13 +59,18 @@ for (const file of allRepoFiles) {
 }
 
 // --------------------------------------------------------------------
-// 2. Verify Git Ignore & Tracked Files Security
+// 2. Verify Git Ignore & Tracked Files Security (with Docker .git-less fallback)
 // --------------------------------------------------------------------
 try {
-  const trackedFiles = execSync('git ls-files', { encoding: 'utf8' })
-    .split(/\r?\n/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const hasGitDir = fs.existsSync(path.join(ROOT_DIR, '.git'));
+  const trackedFiles = hasGitDir
+    ? execSync('git ls-files', { encoding: 'utf8' })
+        .split(/\r?\n/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : allRepoFiles
+        .map((f) => path.relative(ROOT_DIR, f).replace(/\\/g, '/'))
+        .filter((rel) => rel !== '.env');
 
   for (const tracked of trackedFiles) {
     const base = path.basename(tracked);
@@ -206,4 +211,3 @@ if (errors.length > 0) {
   console.log('   - 0 secrets or private keys exposed in Git tracked files');
   console.log(`   - ${requiredApiModules.length} independent backend Bounded Contexts verified with zero cross-module coupling`);
 }
-
