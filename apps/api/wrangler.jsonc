@@ -1,0 +1,29 @@
+﻿{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "agridata-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-02-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  // Cloudflare Free Tier D1 Database for Edge Caching
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "agridata_edge_db",
+      "database_id": "local-agridata-edge-db"
+    }
+  ],
+  // Cloudflare Free Tier KV for Fast Metric Lookups
+  "kv_namespaces": [
+    {
+      "binding": "KV_CACHE",
+      "id": "local-agridata-kv"
+    }
+  ],
+  // Scheduled Cron Trigger for Automated Market Crawling (4:00 AM UTC)
+  "triggers": {
+    "crons": ["0 4 * * *"]
+  }
+}
