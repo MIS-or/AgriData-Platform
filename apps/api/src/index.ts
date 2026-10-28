@@ -6,6 +6,7 @@ import { sourcesRouter } from './routes/sources.js';
 import { ingestRouter } from './routes/ingest.js';
 import { martsRouter } from './routes/marts.js';
 import { qualityRouter } from './routes/quality.js';
+import { modelsRouter } from './routes/models.js';
 import { fetchOpenMeteoWeather } from './services/weather.js';
 
 export interface Env {
@@ -37,6 +38,7 @@ app.route('/api/v1/sources', sourcesRouter);
 app.route('/api/v1/ingest', ingestRouter);
 app.route('/api/v1/marts', martsRouter);
 app.route('/api/v1/quality', qualityRouter);
+app.route('/api/v1/models', modelsRouter);
 
 // Endpoint trả về từ điển cây trồng thí điểm
 app.get('/api/v1/crops', (c) => {
