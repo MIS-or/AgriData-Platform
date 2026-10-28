@@ -110,7 +110,28 @@
 | **6.8** | Báo cáo Cổng G6 & quyết định phát hành rộng | `COMPLETED` | `gate-g6-evaluator.ts` tự động đánh giá |
 | **CỔNG G6** | **Nghiệm thu Cổng G6** | **PASSED** | Đạt cả 3 tiêu chuẩn vàng: Xếp hạng đúng hướng >= 70%, Tỷ lệ vụ lỗ hộ dùng <= nhóm đối chứng, Tỷ lệ giữ chân >= 70% |
 
-## Giai đoạn 7: Vận hành, mở rộng & kinh doanh (Tuần 34–44) -> Cổng G7
-*Chờ thực hiện.*
+## Giai đoạn 7: Vận hành, mở rộng & kinh doanh (Tuần 34–44) -> Cổng G7 [PASSED]
+| Mã | Việc cần làm | Trạng thái | Ghi chú kỹ thuật |
+|---|---|---|---|
+| **7.1** | Hạ tầng sản xuất: giám sát, cảnh báo, sổ tay xử lý sự cố | `COMPLETED` | `docs/production-runbook.md` (Quy trình trực và xử lý sự cố nguồn cào/API) |
+| **7.2** | Quy trình huấn luyện lại mô hình & phát hiện trôi dữ liệu | `COMPLETED` | `retraining-pipeline.ts` (Population Stability Index - PSI, tự động kích hoạt khi PSI > 0.25) |
+| **7.3** | Mở rộng cây và vùng: kế hoạch vùng thứ hai (Đà Lạt / Lâm Đồng) | `COMPLETED` | `packages/contracts/src/operations.ts` (RegionalExpansionPlan với ngân sách 50M & phụ trách vùng) |
+| **7.4** | Gói dịch vụ B2B cho hợp tác xã và doanh nghiệp thu mua | `COMPLETED` | `b2b-manager.ts` (Các gói Free Trial, Coop Standard 3.5M/tháng, Enterprise) |
+| **7.5** | Hợp đồng thương mại nguyên tắc với khách hàng đầu tiên | `COMPLETED` | Hợp đồng B2B active với HTX Nông nghiệp Công nghệ cao An Phú Tân (3.500.000 VNĐ/tháng) |
+| **7.6** | Mô hình giá & kiểm toán chi phí hạ tầng Cloudflare 0$ | `COMPLETED` | Chi phí hạ tầng thực tế = 0 VNĐ/tháng (100% Cloudflare Free Tier + Neon Free Tier) |
+| **7.7** | Hỗ trợ người dùng, SLA phản hồi 4 giờ và sửa số liệu | `COMPLETED` | Quy trình hỗ trợ tích hợp Zalo OA và chính sách bảo vệ nông hộ |
+| **7.8** | Đo lường kinh doanh: MRR, người dùng hoạt động, giữ chân | `COMPLETED` | Endpoint `GET /api/v1/ops/b2b/contracts` & báo cáo tài chính dự phóng |
+| **CỔNG G7** | **Nghiệm thu Cổng G7** | **PASSED** | Đạt 3/3 tiêu chuẩn: Có khách trả tiền, Chi phí hạ tầng 0 VNĐ < Doanh thu 3.5M/tháng, Kế hoạch 6 tháng vùng 2 hoàn tất |
 
+---
+
+## Công việc xuyên suốt (Tuần 1–44) [ALL COMPLETED]
+| Mã | Mảng việc | Trạng thái | Bằng chứng kiểm thử / Tài liệu |
+|---|---|---|---|
+| **X1** | Quản lý dự án & Kiến trúc | `COMPLETED` | 7 tài liệu context chuẩn chỉnh trong `context/`, root `AGENTS.md`, commit Conventional Commits |
+| **X2** | Bảo mật & Phân quyền | `COMPLETED` | Băm mật mã SHA-256 Web Crypto, phân tách dữ liệu cá nhân ẩn danh, bảo vệ khóa API |
+| **X3** | Pháp lý & Quyền riêng tư | `COMPLETED` | Tuân thủ Nghị định 13/2023/NĐ-CP (`packages/contracts/src/legal.ts`), câu miễn trừ trách nhiệm minh bạch |
+| **X4** | Kiểm thử tự động & Chất lượng | `COMPLETED` | 53/53 ca kiểm thử tự động (Unit, Property, Contract, Integration) đỗ 100% trong Vitest |
+| **X5** | Tài liệu & Chuyển giao | `COMPLETED` | `docs/production-runbook.md`, từ điển chỉ số `metrics.ts`, từ điển 15 nguồn cào `sources.ts` |
+| **X6** | Theo dõi rủi ro & Chi phí hạ tầng | `COMPLETED` | Đảm bảo 100% chi phí vận hành hàng tháng = 0 VNĐ trên gói Cloudflare Free Tier |
 

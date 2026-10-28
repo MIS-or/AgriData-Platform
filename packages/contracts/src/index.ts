@@ -6,4 +6,5 @@ export * from './metrics';
 export * from './legal';
 export * from './farmer';
 export * from './field-experiment';
+export * from './operations';
 export * from './recommendations';

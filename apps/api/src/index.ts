@@ -9,6 +9,7 @@ import { qualityRouter } from './routes/quality.js';
 import { modelsRouter } from './routes/models.js';
 import { farmerRouter } from './routes/farmer.js';
 import { fieldAuditRouter } from './routes/field-audit.js';
+import { operationsRouter } from './routes/operations.js';
 import { fetchOpenMeteoWeather } from './services/weather.js';
 
 export interface Env {
@@ -43,6 +44,7 @@ app.route('/api/v1/quality', qualityRouter);
 app.route('/api/v1/models', modelsRouter);
 app.route('/api/v1/farmer', farmerRouter);
 app.route('/api/v1/field', fieldAuditRouter);
+app.route('/api/v1/ops', operationsRouter);
 
 // Endpoint trả về từ điển cây trồng thí điểm
 app.get('/api/v1/crops', (c) => {
