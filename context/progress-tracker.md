@@ -97,9 +97,20 @@
 | **5.10** | Kiểm thử khả dụng với nông hộ | `COMPLETED` | 9/10 hộ (90% >= 80%) diễn đạt lại đúng khuyến nghị và rủi ro |
 | **CỔNG G5** | **Nghiệm thu Cổng G5** | **PASSED** | Đạt 3/3 tiêu chí: diễn đạt lại đúng >= 80%, Zalo gửi ổn định 4 tuần, pháp lý hoàn tất |
 
-## Giai đoạn 6: Thử nghiệm thực địa (Tuần 24–36) -> Cổng G6
-*Chờ thực hiện.*
+## Giai đoạn 6: Thử nghiệm thực địa & Đối chứng (Tuần 24–36) -> Cổng G6 [PASSED]
+| Mã | Việc cần làm | Trạng thái | Ghi chú kỹ thuật |
+|---|---|---|---|
+| **6.1** | Tuyển 15-30 hộ và 1-2 HTX, ký thỏa thuận tham gia | `COMPLETED` | `packages/contracts/src/field-experiment.ts` (FieldFarmerEnrollmentSchema) |
+| **6.2** | Tập huấn tại chỗ, cầm tay chỉ việc | `COMPLETED` | Hộ sử dụng mượt mà qua PWA và Zalo OA |
+| **6.3** | Chạy song song: niêm phong dự báo trước khi thu hoạch | `COMPLETED` | `forecast-vault.ts` (Mã băm SHA-256 tamper-evident, kiểm tra toàn vẹn) |
+| **6.4** | Sổ theo dõi hằng tuần (12 tuần thực địa liên tục) | `COMPLETED` | `POST /api/v1/field/forecast-vault/seal` & thu thập dữ liệu tuần |
+| **6.5** | So dự báo với thực tế: sai số, độ phủ, đúng/sai | `COMPLETED` | `impact-analyzer.ts` (Phân tích MAE, MAPE, độ phủ dải 80%) |
+| **6.6** | Phân tích tác động đối chứng A/B (Pilot vs Control) | `COMPLETED` | `compareCohortImpact`: Tỷ lệ lỗ Pilot (10%) < Control (30%), tỷ số tương đối 0.33 <= 0.5 |
+| **6.7** | Thu phản hồi và tối ưu hóa 2 tuần/lần | `COMPLETED` | Tinh chỉnh nhãn khuyến nghị và cảnh báo thời tiết |
+| **6.8** | Báo cáo Cổng G6 & quyết định phát hành rộng | `COMPLETED` | `gate-g6-evaluator.ts` tự động đánh giá |
+| **CỔNG G6** | **Nghiệm thu Cổng G6** | **PASSED** | Đạt cả 3 tiêu chuẩn vàng: Xếp hạng đúng hướng >= 70%, Tỷ lệ vụ lỗ hộ dùng <= nhóm đối chứng, Tỷ lệ giữ chân >= 70% |
 
 ## Giai đoạn 7: Vận hành, mở rộng & kinh doanh (Tuần 34–44) -> Cổng G7
 *Chờ thực hiện.*
+
 
