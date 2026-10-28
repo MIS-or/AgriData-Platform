@@ -2,15 +2,26 @@ import { Hono } from 'hono';
 import { FarmerProfileSchema } from '@agridata/contracts';
 import { generatePersonalizedRecommendations } from '../application/farmer-personalization.js';
 import { generateZaloWeeklyBulletin, auditGateG5 } from '../application/zalo-bulletin.js';
+import { Env } from '../../../core/config/env.js';
+import { edgeKvGet, edgeKvPut } from '../../../core/cloudflare/edge-services.js';
 
-export const farmerRouter = new Hono();
+export const farmerRouter = new Hono<{ Bindings: Env }>();
 
 // POST /api/v1/farmer/personalized - calculate personalized recommendations
 farmerRouter.post('/personalized', async (c) => {
   try {
     const body = await c.req.json();
     const profile = FarmerProfileSchema.parse(body.profile);
-    const regionalCapacities = body.regionalCapacities || {};
+
+    // [Goal G5 & X4] Read & persist Anti-Herd regional saturation state in Cloudflare Workers KV
+    const kvCapacityKey = `anti-herd:capacity:${profile.coopId}`;
+    const cachedCapacitiesRaw = await edgeKvGet(c.env, kvCapacityKey);
+    const cachedCapacities = cachedCapacitiesRaw ? JSON.parse(cachedCapacitiesRaw) : {};
+    const regionalCapacities = {
+      ...cachedCapacities,
+      ...(body.regionalCapacities || {}),
+    };
+
     const marketForecasts = body.marketForecasts || {
       bok_choy: { q10: 11000, q50: 14000, q90: 17000 },
       choi_sum: { q10: 9500, q50: 12500, q90: 15500 },
@@ -25,6 +36,8 @@ farmerRouter.post('/personalized', async (c) => {
       marketForecasts,
       weatherCaution
     );
+
+    await edgeKvPut(c.env, kvCapacityKey, JSON.stringify(regionalCapacities), 86400);
 
     return c.json({
       success: true,

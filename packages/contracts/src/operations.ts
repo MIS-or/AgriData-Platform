@@ -46,13 +46,10 @@ export interface CloudflareFreeServiceSpec {
     | 'CLOUDFLARE_D1_SQL'
     | 'CLOUDFLARE_WORKERS_KV'
     | 'CLOUDFLARE_R2_STORAGE'
-    | 'CLOUDFLARE_HYPERDRIVE'
-    | 'CLOUDFLARE_WORKERS_AI'
-    | 'CLOUDFLARE_VECTORIZE'
-    | 'CLOUDFLARE_ANALYTICS_ENGINE'
-    | 'CLOUDFLARE_TURNSTILE';
+    | 'CLOUDFLARE_HYPERDRIVE_TURNSTILE';
   serviceName: string;
   bindingName: string;
+  targetGate: string;
   freeTierQuota: string;
   currentUsageSummary: string;
   utilizationPercent: number;

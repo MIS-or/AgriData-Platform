@@ -11,8 +11,10 @@ import {
   HarvestActualRecord,
   TimestampedForecastRecord,
 } from '@agridata/contracts';
+import { Env } from '../../../core/config/env.js';
+import { edgeR2PutImmutableObject } from '../../../core/cloudflare/edge-services.js';
 
-export const fieldAuditRouter = new Hono();
+export const fieldAuditRouter = new Hono<{ Bindings: Env }>();
 
 // POST /api/v1/field/forecast-vault/seal
 fieldAuditRouter.post('/forecast-vault/seal', async (c) => {
@@ -27,7 +29,20 @@ fieldAuditRouter.post('/forecast-vault/seal', async (c) => {
       Number(q90PriceVnd),
       Number(recommendedRank)
     );
-    return c.json({ success: true, sealedRecord: sealed });
+
+    // [Goal G6] Persist SHA-256 sealed forecast receipt into Cloudflare R2 Immutable Object Vault
+    const r2Receipt = await edgeR2PutImmutableObject(
+      c.env,
+      `vault/forecasts/${sealed.forecastId}.json`,
+      JSON.stringify(sealed),
+      sealed.contentHash
+    );
+
+    return c.json({
+      success: true,
+      sealedRecord: sealed,
+      r2VaultObjectKey: r2Receipt.key,
+    });
   } catch (err: any) {
     return c.json({ success: false, error: err.message }, 400);
   }

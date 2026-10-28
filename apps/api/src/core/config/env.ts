@@ -7,14 +7,11 @@
  */
 
 export interface Env {
-  // Cloudflare Free Tier Edge Resource Bindings
-  DB?: unknown;                                       // Cloudflare D1 Serverless SQL (5GB Free)
-  KV_CACHE?: unknown;                                 // Cloudflare Workers KV (1GB Free, 100k reads/day)
-  R2_VAULT?: unknown;                                 // Cloudflare R2 Object Storage (10GB Free, 0 Egress)
-  HYPERDRIVE?: { connectionString?: string };         // Cloudflare Hyperdrive (Free Postgres Pooler & Cache)
-  AI?: { run: (model: string, input: unknown) => Promise<unknown> }; // Cloudflare Workers AI (10k Neurons/day Free)
-  VECTORIZE_AGRI_KB?: { query: (vector: number[], options?: unknown) => Promise<unknown> }; // Cloudflare Vectorize (30M dims/mo Free)
-  ANALYTICS_ENGINE?: { writeDataPoint: (event: { blobs?: string[]; doubles?: number[]; indexes?: string[] }) => void }; // Cloudflare Analytics Engine (100k points/day Free)
+  // Goal-Driven Cloudflare Free Tier Edge Resource Bindings
+  DB?: unknown;                                       // [Goal G2 & G4] Cloudflare D1 Serverless SQL (5GB Free)
+  KV_CACHE?: unknown;                                 // [Goal G4, G5 & X4] Cloudflare Workers KV (Anti-Herd & Marts Cache)
+  R2_VAULT?: unknown;                                 // [Goal G1 & G6] Cloudflare R2 Object Storage (Tier-1 Raw & SHA-256 Forecast Vault)
+  HYPERDRIVE?: { connectionString?: string };         // [Goal G2, G3 & X6] Cloudflare Hyperdrive (Neon Postgres Pooler)
 
   // Cloudflare Free Tier Config & Secret Keys
   CLOUDFLARE_ACCOUNT_ID?: string;
@@ -23,10 +20,7 @@ export interface Env {
   CLOUDFLARE_KV_NAMESPACE_ID?: string;
   CLOUDFLARE_R2_BUCKET_NAME?: string;
   CLOUDFLARE_HYPERDRIVE_ID?: string;
-  CLOUDFLARE_VECTORIZE_INDEX_NAME?: string;
-  CLOUDFLARE_WORKERS_AI_DAILY_NEURON_LIMIT?: string;
-  CLOUDFLARE_ANALYTICS_DATASET?: string;
-  CLOUDFLARE_TURNSTILE_SECRET_KEY?: string;
+  CLOUDFLARE_TURNSTILE_SECRET_KEY?: string;           // [Goal G1 & X2] Cloudflare Turnstile Anti-Bot Verification
 
   // Neon Serverless PostgreSQL (3-Tier Data Warehouse)
   NEON_DATABASE_URL?: string;                         // Pooled Neon Serverless PostgreSQL URL
