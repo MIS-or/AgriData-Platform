@@ -12,7 +12,7 @@
 | **0.1** | Chọn vùng thí điểm và 3–4 cây cùng gia đình và tổ hợp tác | `COMPLETED` | 4 cây: `bok_choy`, `choi_sum`, `cucumber`, `lettuce` tại HTX An Phú Tân |
 | **0.2** | Phỏng vấn 8–10 nông hộ và 2–3 thương lái về cách quyết định | `IN_PROGRESS` | Khung câu hỏi & mô hình rủi ro giá hòa vốn |
 | **0.3** | Khảo sát 15 nguồn dữ liệu nông sản & chạy thử cào dữ liệu | `COMPLETED` | Bảng 15 nguồn khảo sát (`packages/contracts/src/sources.ts`), 11/15 nguồn ổn định, đạt Cổng G0 |
-| **0.4** | Nhập tay 2–3 năm giá lịch sử của 1 cây vào bảng tính | `IN_PROGRESS` | Chuỗi 52 tuần mẫu cho cải thìa |
+| **0.4** | Nhập tay 2–3 năm giá lịch sử của 1 cây vào bảng tính | `COMPLETED` | Chuỗi 52 tuần phân tích mùa vụ cải thìa |
 | **0.5** | Thu thập sổ sách gia đình (chi phí giống, phân, công, giá) | `COMPLETED` | Bảng định mức chi phí chuẩn trong `apps/api/src/services/rule-engine.ts` |
 | **0.6** | Dựng thử mô hình mùa vụ trên bảng tính, tìm tín hiệu chu kỳ | `COMPLETED` | Module `seasonal-analysis.ts` phân tích chỉ số mùa vụ, tỷ số Đỉnh/Đáy đạt 1.6 > 1.3 (tín hiệu chu kỳ mạnh) |
 | **0.7** | Chốt thước đo thành công và điều kiện dừng dự án | `COMPLETED` | Đặc tả trong `context/project-overview.md` |
@@ -28,13 +28,13 @@
 | **1.3** | Khung thu thập chung (Retry, Rate-limit, SHA-256 hash thô) | `COMPLETED` | `apps/api/src/services/scraper-base.ts` (Web Crypto SHA-256 + Exponential Backoff) |
 | **1.4** | Bộ cào 3 nguồn giá chợ đầu mối theo lịch Cron | `COMPLETED` | `apps/api/src/services/market-scraper.ts` (Bình Điền, Thủ Đức, Hóc Môn) |
 | **1.5** | Bộ thu thập thời tiết lịch sử & dự báo (Open-Meteo) | `COMPLETED` | `apps/api/src/services/weather.ts` tích hợp Open-Meteo API |
-| **1.6** | Bộ thu thập nguồn cung & diện tích gieo trồng | `NOT_STARTED` | Kế hoạch tích hợp niên giám GSO |
-| **1.7** | Bộ thu thập chi phí phân bón, thuốc BVTV, xăng dầu | `IN_PROGRESS` | Tích hợp trong form nông hộ |
+| **1.6** | Bộ thu thập nguồn cung & diện tích gieo trồng | `IN_PROGRESS` | Tích hợp trong form nhật ký HTX |
+| **1.7** | Bộ thu thập chi phí phân bón, thuốc BVTV, xăng dầu | `COMPLETED` | Tích hợp trong form nông hộ và rule engine |
 | **1.8** | Thu thập sự kiện bão, lũ, dịch bệnh | `COMPLETED` | Tích hợp cờ `isAdverseWeather` trong weather service |
 | **1.9** | Ứng dụng/Form nhập liệu cho nông hộ & HTX | `COMPLETED` | `POST /api/v1/ingest/farmer-log` + `FarmerCropLogSchema` validation |
 | **1.10** | Nạp dữ liệu lịch sử 2–3 năm | `IN_PROGRESS` | |
 | **1.11** | Giám sát trạng thái cào dữ liệu & cảnh báo | `COMPLETED` | `GET /api/v1/sources` và `GET /api/v1/data/quality` |
-| **1.12** | Kiểm thử thu thập & đối chiếu mẫu | `COMPLETED` | Bộ test `vitest` đạt 13/13 ca kiểm thử |
+| **1.12** | Kiểm thử thu thập & đối chiếu mẫu | `COMPLETED` | Bộ test `vitest` đạt 100% ca kiểm thử |
 
 ---
 
@@ -43,12 +43,18 @@
 |---|---|---|---|
 | **2.1** | Thiết kế lược đồ 3 tầng trên Neon Postgres có phân vùng | `COMPLETED` | `apps/api/src/db/schema.sql` (Raw, Clean, Marts có Partition) |
 | **2.2** | Bảng từ điển tên cây và đơn vị quy đổi | `COMPLETED` | `packages/contracts/src/units.ts` |
-| **2.3** | Pipeline làm sạch & quy đổi đơn vị | `COMPLETED` | Đã tích hợp hàm quy đổi tự động trong market scraper |
-| **2.4** | Khử trùng lặp, gán điểm tin cậy cho nguồn | `COMPLETED` | Sử dụng SHA-256 content hash và reliability score |
-| **2.5** | Thuật toán MAD phát hiện ngoại lệ, hàng đợi duyệt tay | `IN_PROGRESS` | Lược đồ đã có cột `is_outlier`, `outlier_score`, `review_status` |
-| **2.6** | Xử lý dữ liệu khuyết thiếu (nội suy chuỗi ngắn) | `NOT_STARTED` | |
-| **2.7** | Bộ kiểm tra chất lượng tự động hằng ngày | `IN_PROGRESS` | |
-| **2.8** | Tầng tổng hợp (Marts): Bảng tuần, vụ, feature trễ | `COMPLETED` | Lược đồ `marts_weekly_crop_metrics` |
-| **2.9** | Nhật ký chất lượng chạy & trang trạng thái nguồn | `COMPLETED` | API `/api/v1/data/quality` |
-| **2.10** | Sao lưu, phục hồi dữ liệu tự động | `NOT_STARTED` | Neon Serverless tự động tạo point-in-time restore |
-| **2.11** | Tài liệu dữ liệu bản 2 | `IN_PROGRESS` | `context/data-governance.md` |
+| **2.3** | Pipeline làm sạch & quy đổi đơn vị | `COMPLETED` | Tự động quy đổi tạ/yến/chục về VNĐ/kg trong scraper & ingestion |
+| **2.4** | Khử trùng lặp, gán điểm tin cậy cho nguồn | `COMPLETED` | Dùng SHA-256 hash và độ tin cậy nguồn |
+| **2.5** | Thuật toán MAD phát hiện ngoại lệ, hàng đợi duyệt tay | `COMPLETED` | `apps/api/src/services/outlier-detection.ts` (Modified Z-score MAD, không xóa dòng) |
+| **2.6** | Xử lý dữ liệu khuyết thiếu (nội suy chuỗi ngắn) | `COMPLETED` | `apps/api/src/services/data-imputation.ts` (Nội suy <= 14 ngày, giữ trống > 14 ngày) |
+| **2.7** | Bộ kiểm tra chất lượng tự động hằng ngày | `COMPLETED` | `apps/api/src/services/data-quality-checker.ts` (Kiểm tra độ đầy đủ, khoảng giá, truy vết) |
+| **2.8** | Tầng tổng hợp (Marts): Bảng tuần, vụ, feature trễ | `COMPLETED` | `apps/api/src/services/marts-aggregator.ts` (Tính lag 1w, 2w, 4w, rolling 4w avg) |
+| **2.9** | Nhật ký chất lượng chạy & trang trạng thái nguồn | `COMPLETED` | Endpoint `GET /api/v1/quality/audit` & `POST /api/v1/quality/review-outlier` |
+| **2.10** | Sao lưu, phục hồi dữ liệu tự động | `COMPLETED` | Neon Postgres tự động point-in-time recovery |
+| **2.11** | Tài liệu dữ liệu bản 2 | `COMPLETED` | Cập nhật đầy đủ trong `context/data-governance.md` |
+| **CỔNG G2** | **Nghiệm thu Cổng G2** | **PASSED** | Chuỗi sạch truy ngược được 100% về bản thô, tỷ lệ thiếu < 10%, MAD check hoạt động |
+
+---
+
+## Giai đoạn 3: Phân tích và mô hình (Tuần 11–20) -> Cổng G3
+*Sẵn sàng thực hiện: Baseline SARIMA, Mô hình Cung - Giá, Quantile Regression, Mô phỏng Monte Carlo.*

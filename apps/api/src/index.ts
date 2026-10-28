@@ -4,6 +4,8 @@ import { CROP_DICTIONARY, CropCode } from '@agridata/contracts';
 import { evaluateFarmerRecommendation } from './services/rule-engine.js';
 import { sourcesRouter } from './routes/sources.js';
 import { ingestRouter } from './routes/ingest.js';
+import { martsRouter } from './routes/marts.js';
+import { qualityRouter } from './routes/quality.js';
 import { fetchOpenMeteoWeather } from './services/weather.js';
 
 export interface Env {
@@ -33,6 +35,8 @@ app.get('/health', (c) => {
 // Gắn các sub-routers
 app.route('/api/v1/sources', sourcesRouter);
 app.route('/api/v1/ingest', ingestRouter);
+app.route('/api/v1/marts', martsRouter);
+app.route('/api/v1/quality', qualityRouter);
 
 // Endpoint trả về từ điển cây trồng thí điểm
 app.get('/api/v1/crops', (c) => {
@@ -91,23 +95,6 @@ app.get('/api/v1/recommendations/farmer', (c) => {
 
   return c.json({
     data: recommendation,
-  });
-});
-
-// Endpoint chất lượng dữ liệu & trạng thái cào (Gate G1 & G2)
-app.get('/api/v1/data/quality', (c) => {
-  return c.json({
-    qualityStatus: 'HEALTHY',
-    gateProgress: {
-      g0: 'PASSED (>= 3 stable sources verified)',
-      g1: 'ACTIVE (Daily cron at 04:00 AM)',
-      g2: 'READY (Postgres 3-tier schema mapped)',
-    },
-    sources: [
-      { name: 'Chợ Bình Điền', status: 'ACTIVE', lastRun: new Date().toISOString(), latencyMs: 240 },
-      { name: 'Chợ Thủ Đức', status: 'ACTIVE', lastRun: new Date().toISOString(), latencyMs: 310 },
-      { name: 'Open-Meteo', status: 'ACTIVE', lastRun: new Date().toISOString(), latencyMs: 120 },
-    ],
   });
 });
 
