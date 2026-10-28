@@ -68,12 +68,25 @@ export const CROP_DICTIONARY: Record<CropCode, CropMetadata> = {
   },
 };
 
+/**
+ * Phân giải tên nông sản thô từ chợ (hỗ trợ tên chứa ghi chú như 'Cải thìa (loại 1)', 'Dưa leo miền Tây')
+ */
 export function resolveCropCode(input: string): CropCode | null {
   const normalized = input.trim().toLowerCase();
+
+  // 1. Khớp chính xác trước
   for (const crop of Object.values(CROP_DICTIONARY)) {
     if (crop.code === normalized || crop.aliases.some((alias) => alias.toLowerCase() === normalized)) {
       return crop.code;
     }
   }
+
+  // 2. Khớp chuỗi con (nếu tên chứa phụ ngữ như 'loại 1', 'Đà Lạt', 'miền Tây')
+  for (const crop of Object.values(CROP_DICTIONARY)) {
+    if (crop.aliases.some((alias) => normalized.includes(alias.toLowerCase()))) {
+      return crop.code;
+    }
+  }
+
   return null;
 }
