@@ -1,12 +1,31 @@
-﻿import { Hono } from 'hono';
+import { Hono } from 'hono';
 import { FarmerCropLogSchema } from '@agridata/contracts';
+import { Env } from '../../../core/config/env.js';
+import {
+  edgeR2PutImmutableObject,
+  verifyTurnstileToken,
+} from '../../../core/cloudflare/edge-services.js';
 
-export const ingestRouter = new Hono();
+export const ingestRouter = new Hono<{ Bindings: Env }>();
 
 // POST /api/v1/ingest/farmer-log - Nhập nhật ký sản xuất vụ mùa của nông hộ/HTX (Mã việc 1.9 & 5.6)
 ingestRouter.post('/farmer-log', async (c) => {
   try {
     const body = await c.req.json();
+
+    // [Goal G1 & X2] Cloudflare Turnstile anti-bot check before accepting crowd-sourced data
+    const turnstileToken = c.req.header('x-turnstile-token') || body.turnstileToken;
+    const turnstileCheck = await verifyTurnstileToken(c.env, turnstileToken);
+    if (!turnstileCheck.verified) {
+      return c.json(
+        {
+          success: false,
+          error: 'Xác thực chống bot (Cloudflare Turnstile) không hợp lệ.',
+        },
+        403
+      );
+    }
+
     const validatedLog = FarmerCropLogSchema.parse(body);
 
     // Tính toán chi phí hòa vốn ước tính trên 1 kg
@@ -22,11 +41,19 @@ ingestRouter.post('/farmer-log', async (c) => {
 
     const logId = `log_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
+    // [Goal G1 & X1] Archive immutable Tier-1 raw payload into Cloudflare R2 (Zero Egress, saves Neon 0.5GB DB)
+    const r2Archive = await edgeR2PutImmutableObject(
+      c.env,
+      `raw/farmer-logs/${logId}.json`,
+      JSON.stringify({ logId, ...validatedLog })
+    );
+
     return c.json({
       success: true,
       logId,
       calculatedBreakevenPriceVndPerKg: breakevenVndPerKg,
-      message: 'Nhật ký vụ mùa đã được ghi nhận vào kho dữ liệu sạch lớp 1.',
+      rawArchiveKey: r2Archive.key,
+      message: 'Nhật ký vụ mùa đã được ghi nhận vào kho dữ liệu sạch lớp 1 và lưu trữ bất biến trên R2.',
       timestamp: new Date().toISOString(),
       summary: {
         cropCode: validatedLog.cropCode,

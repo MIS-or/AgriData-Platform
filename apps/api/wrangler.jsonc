@@ -7,11 +7,11 @@
   "observability": {
     "enabled": true
   },
-  // 1. Cloudflare Smart Placement (Free: executes Worker close to ap-southeast-1 Neon DB)
+  // [Goal G0 & X6] Smart Placement: executes Worker close to ap-southeast-1 Neon PostgreSQL
   "placement": {
     "mode": "smart"
   },
-  // 2. Cloudflare Free Tier D1 Serverless SQL (5 GB Free, 5M reads/day, 100k writes/day)
+  // [Goal G2 & G4] Cloudflare D1 Serverless SQL (5 GB Free): Edge cache for hot prices & offline sync
   "d1_databases": [
     {
       "binding": "DB",
@@ -19,22 +19,22 @@
       "database_id": "local-agridata-edge-db"
     }
   ],
-  // 3. Cloudflare Free Tier Workers KV (1 GB Free, 100k reads/day, 1k writes/day)
+  // [Goal G4, G5 & X4] Cloudflare Workers KV (1 GB Free): Anti-Herd 25% saturation counter & Marts cache
   "kv_namespaces": [
     {
       "binding": "KV_CACHE",
       "id": "local-agridata-kv"
     }
   ],
-  // 4. Cloudflare Free Tier R2 Object Storage (10 GB Free, 1M Class A, 10M Class B, 0 Egress)
-  // Stores Immutable Forecast Audit Vault (Gate G6), Raw Market HTML/JSON Archives & B2B Contracts
+  // [Goal G1, G6 & G7] Cloudflare R2 Object Storage (10 GB Free, 0 Egress):
+  // Immutable Tier-1 Raw Market/Farmer Logs & Gate G6 SHA-256 Forecast Audit Vault
   "r2_buckets": [
     {
       "binding": "R2_VAULT",
       "bucket_name": "agridata-immutable-vault"
     }
   ],
-  // 5. Cloudflare Free Tier Hyperdrive (Free PostgreSQL Edge Connection Pooler & Query Cache)
+  // [Goal G2, G3 & X6] Cloudflare Hyperdrive (Free): Connection pooling & query cache for Neon PostgreSQL
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
@@ -42,25 +42,7 @@
       "localConnectionString": "postgresql://agridata:local_dev_placeholder@localhost:5432/neondb"
     }
   ],
-  // 6. Cloudflare Free Tier Workers AI (10,000 Neurons/day Free - Llama 3.1 8B & BGE-M3 Embeddings)
-  "ai": {
-    "binding": "AI"
-  },
-  // 7. Cloudflare Free Tier Vectorize (30M queried vector dimensions/mo, 5M stored dimensions Free)
-  "vectorize": [
-    {
-      "binding": "VECTORIZE_AGRI_KB",
-      "index_name": "agridata-agronomy-kb"
-    }
-  ],
-  // 8. Cloudflare Free Tier Workers Analytics Engine (100k data points/day Free Telemetry)
-  "analytics_engine_datasets": [
-    {
-      "binding": "ANALYTICS_ENGINE",
-      "dataset": "agridata_edge_telemetry"
-    }
-  ],
-  // 9. Scheduled Cron Trigger for Automated Market & Weather Crawling (4:00 AM UTC Daily)
+  // [Goal G1] Scheduled Cron Trigger for Automated Market & Weather Crawling (4:00 AM UTC Daily)
   "triggers": {
     "crons": ["0 4 * * *"]
   }

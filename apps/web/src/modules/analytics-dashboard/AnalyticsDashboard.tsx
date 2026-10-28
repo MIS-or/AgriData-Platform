@@ -425,35 +425,31 @@ export function AnalyticsDashboard() {
           </table>
 
           <h4 style={{ margin: '18px 0 6px 0', fontSize: '14px', color: '#374151' }}>
-            ☁️ Bảng Khai Thác Tối Đa 10 Dịch Vụ Cloudflare Free Tier (0 VNĐ/Tháng · Cổng G7 &amp; X6)
+            ☁️ 6 Dịch Vụ Cloudflare Free Tier Phục Vụ Trực Tiếp Mục Tiêu Cốt Lõi (Gate G0 → G7 · 0 VNĐ/Tháng)
           </h4>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
             <thead>
               <tr style={{ backgroundColor: '#EFF6FF', borderBottom: '1px solid #BFDBFE', color: '#1E3A8A' }}>
                 <th style={{ padding: '8px' }}>Dịch Vụ Cloudflare (Free Tier)</th>
-                <th style={{ padding: '8px' }}>Binding / Cấu Hình</th>
-                <th style={{ padding: '8px' }}>Hạn Mức Miễn Phí</th>
-                <th style={{ padding: '8px' }}>Ứng Dụng Thực Tế Trong AgriData</th>
+                <th style={{ padding: '8px' }}>Binding Thực Thi</th>
+                <th style={{ padding: '8px' }}>Mục Tiêu Cốt Lõi (Gate)</th>
+                <th style={{ padding: '8px' }}>Tác Vụ Thực Tế Trong Các Module</th>
                 <th style={{ padding: '8px' }}>Chi Phí</th>
               </tr>
             </thead>
             <tbody>
               {[
-                { name: '1. Cloudflare Pages + Web Analytics', binding: 'apps/web (CDN)', quota: 'Unlimited băng thông · 500 builds/tháng', use: 'Hosting PWA Nông Dân & 7-Tab Analytics Dashboard', cost: '0 đ' },
-                { name: '2. Workers + Cron + Smart Placement', binding: 'agridata-api (0 4 * * *)', quota: '100.000 req/ngày · 10ms CPU/req', use: 'Hono Edge API, Monte Carlo 2.000 kịch bản & Cron cào giá 04:00 UTC', cost: '0 đ' },
-                { name: '3. Cloudflare D1 Serverless SQL', binding: 'DB (agridata_edge_db)', quota: '5 GB lưu trữ · 5M dòng đọc/ngày', use: 'Edge SQL Cache bảng giá chợ đầu mối & đồng bộ ngoại tuyến', cost: '0 đ' },
-                { name: '4. Cloudflare Workers KV', binding: 'KV_CACHE', quota: '1 GB · 100.000 lượt đọc/ngày', use: 'Bộ đếm chống trồng ồ ạt (Anti-Herd 25%) & Từ điển chỉ số < 1ms', cost: '0 đ' },
-                { name: '5. Cloudflare R2 Object Storage', binding: 'R2_VAULT', quota: '10 GB/tháng · 0đ phí băng thông (Zero Egress)', use: 'Lưu trữ bất biến Két sắt kiểm toán dự báo SHA-256 (Cổng G6) & Hợp đồng B2B', cost: '0 đ' },
-                { name: '6. Cloudflare Hyperdrive', binding: 'HYPERDRIVE', quota: 'Miễn phí 100% kèm gói Workers', use: 'Connection Pooling & Query Cache tăng tốc kết nối tới Neon PostgreSQL', cost: '0 đ' },
-                { name: '7. Cloudflare Workers AI', binding: 'AI (Llama-3.1-8B)', quota: '10.000 Neurons/ngày (Khóa trần 80%)', use: 'Tự nhiên hóa bản tin khuyến nghị Zalo OA tiếng Việt (Có fallback Rule Engine)', cost: '0 đ' },
-                { name: '8. Cloudflare Vectorize', binding: 'VECTORIZE_AGRI_KB', quota: '30M chiều truy vấn/tháng · 5M chiều lưu', use: 'Tìm kiếm ngữ nghĩa quy trình canh tác VietGAP & ngưỡng chịu mặn ĐBSCL', cost: '0 đ' },
-                { name: '9. Workers Analytics Engine', binding: 'ANALYTICS_ENGINE', quota: '100.000 điểm dữ liệu/ngày + SQL API', use: 'Ghi nhận Telemetry độ trễ biên, chỉ số lệch chuẩn PSI & cảnh báo Anti-Herd', cost: '0 đ' },
-                { name: '10. Cloudflare Turnstile', binding: 'TURNSTILE_SECRET_KEY', quota: 'Unlimited Widgets & xác thực miễn phí', use: 'Chống bot spam biểu mẫu Nông dân báo giá mà không cần giải CAPTCHA', cost: '0 đ' },
+                { name: '1. Cloudflare Pages', binding: 'apps/web (CDN)', gate: 'Gate G4 & G5', use: 'Phân phối PWA Nông Dân (Offline-first) & 7-Tab Analytics Dashboard với băng thông không giới hạn', cost: '0 đ' },
+                { name: '2. Workers + Cron + Smart Placement', binding: 'agridata-api (0 4 * * *)', gate: 'Gate G0, G1, G3 & X6', use: 'Chạy Cron cào giá chợ đầu mối 04:00 UTC (G1) & mô phỏng Monte Carlo 2.000 kịch bản dưới 10ms CPU (G3)', cost: '0 đ' },
+                { name: '3. Cloudflare D1 Serverless SQL', binding: 'DB (agridata_edge_db)', gate: 'Gate G2 & G4', use: 'Đệm đọc SQL tại biên (5M dòng/ngày) cho bảng giá sạch để bảo vệ giới hạn 0.5 GB của kho Neon PostgreSQL', cost: '0 đ' },
+                { name: '4. Cloudflare Workers KV', binding: 'KV_CACHE', gate: 'Gate G4, G5 & X4', use: 'Đồng bộ bộ đếm hạn mức chống trồng ồ ạt (Anti-Herd 25% tại farmer.routes.ts) & đệm Marts tuần (marts.routes.ts)', cost: '0 đ' },
+                { name: '5. Cloudflare R2 Object Storage', binding: 'R2_VAULT', gate: 'Gate G1 (X1) & G6', use: 'Lưu trữ bất biến nhật ký thô Tier-1 (ingest.routes.ts) & Két sắt dự báo ký SHA-256 (field-audit.routes.ts)', cost: '0 đ' },
+                { name: '6. Hyperdrive & Turnstile', binding: 'HYPERDRIVE + TURNSTILE', gate: 'Gate G1 (X2) & G7 (X6)', use: 'Connection Pooling vào Neon Postgres giảm độ trễ < 10ms; Turnstile chặn bot đầu độc form báo giá nông hộ', cost: '0 đ' },
               ].map((svc) => (
                 <tr key={svc.name} style={{ borderBottom: '1px solid #F3F4F6' }}>
                   <td style={{ padding: '7px 8px', fontWeight: 600, color: '#111827' }}>{svc.name}</td>
                   <td style={{ padding: '7px 8px', fontFamily: 'monospace', color: '#2563EB' }}>{svc.binding}</td>
-                  <td style={{ padding: '7px 8px', color: '#4B5563' }}>{svc.quota}</td>
+                  <td style={{ padding: '7px 8px', fontWeight: 600, color: '#92400E' }}>{svc.gate}</td>
                   <td style={{ padding: '7px 8px', color: '#374151' }}>{svc.use}</td>
                   <td style={{ padding: '7px 8px', fontWeight: 'bold', color: '#059669' }}>{svc.cost}</td>
                 </tr>

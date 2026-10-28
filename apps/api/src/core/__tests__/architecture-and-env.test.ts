@@ -7,13 +7,11 @@ import {
   edgeKvPut,
   edgeR2GetObject,
   edgeR2PutImmutableObject,
-  generateAgronomicAiAdvisory,
-  queryVectorizeAgronomyKb,
   resolveWarehouseConnectionString,
   verifyTurnstileToken,
 } from '../cloudflare/edge-services.js';
 
-describe('Core Infrastructure: Secret Resolution, PII Protection & Cloudflare Free Tier Suite', () => {
+describe('Core Infrastructure: Secret Resolution, PII Protection & Purposeful Cloudflare Free Tier', () => {
   it('prioritizes Cloudflare Worker bindings over process.env without hardcoding secrets', () => {
     const mockBindings: Env = {
       INTERNAL_API_SECRET: 'worker_binding_secret_token',
@@ -32,16 +30,16 @@ describe('Core Infrastructure: Secret Resolution, PII Protection & Cloudflare Fr
     await expect(hashFarmerPhonePii('0912345678', '')).rejects.toThrow('PII_HASH_SALT');
   });
 
-  it('audits all 10 Cloudflare Free Tier services at 0 VND/month with zero waste', () => {
+  it('audits only purposeful Cloudflare Free Tier services mapped directly to Gates G0-G7 at 0 VND/month', () => {
     const report = auditCloudflareFreeTierSuite();
-    expect(report.totalServicesConfigured).toBe(10);
-    expect(report.activeServicesCount).toBe(10);
+    expect(report.totalServicesConfigured).toBe(6);
+    expect(report.activeServicesCount).toBe(6);
     expect(report.totalMonthlyCostVnd).toBe(0);
     expect(report.isZeroWasteOptimized).toBe(true);
-    expect(report.services.every((s) => s.monthlyCostVnd === 0)).toBe(true);
+    expect(report.services.every((s) => s.monthlyCostVnd === 0 && s.targetGate.length > 0)).toBe(true);
   });
 
-  it('executes Cloudflare KV, R2 Vault, Hyperdrive, Workers AI, Vectorize, and Turnstile adapters cleanly', async () => {
+  it('executes KV (Anti-Herd/Marts cache), R2 (Tier-1 Raw & Gate G6 Vault), Hyperdrive, and Turnstile adapters cleanly', async () => {
     await edgeKvPut(undefined, 'test:kv:key', 'edge_cached_value', 60);
     expect(await edgeKvGet(undefined, 'test:kv:key')).toBe('edge_cached_value');
 
@@ -59,17 +57,10 @@ describe('Core Infrastructure: Secret Resolution, PII Protection & Cloudflare Fr
     });
     expect(hdBound.viaHyperdrive).toBe(true);
 
-    const aiRes = await generateAgronomicAiAdvisory(
-      undefined,
-      'Tóm tắt khuyến nghị Cải thìa',
-      'Khuyến nghị trồng Cải thìa tối đa 50% diện tích.'
-    );
-    expect(aiRes.text).toContain('Cải thìa');
+    const turnstileOk = await verifyTurnstileToken(undefined, 'valid_token');
+    expect(turnstileOk.verified).toBe(true);
 
-    const kbRes = await queryVectorizeAgronomyKb(undefined, 'CAI_THIA');
-    expect(kbRes.matches.length).toBeGreaterThan(0);
-
-    const turnstileRes = await verifyTurnstileToken(undefined, 'dummy_token');
-    expect(turnstileRes.verified).toBe(true);
+    const turnstileBot = await verifyTurnstileToken(undefined, 'INVALID_BOT_TOKEN');
+    expect(turnstileBot.verified).toBe(false);
   });
 });
