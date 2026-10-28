@@ -10,6 +10,12 @@ import {
   resolveWarehouseConnectionString,
   verifyTurnstileToken,
 } from '../cloudflare/edge-services.js';
+import {
+  getWarehouseSyncOverview,
+  insertRawFarmerLogInWarehouse,
+  queryWeeklyMartsFromWarehouse,
+  updateOutlierReviewInWarehouse,
+} from '../database/neon-client.js';
 
 describe('Core Infrastructure: Secret Resolution, PII Protection & Purposeful Cloudflare Free Tier', () => {
   it('prioritizes Cloudflare Worker bindings over process.env without hardcoding secrets', () => {
@@ -62,5 +68,27 @@ describe('Core Infrastructure: Secret Resolution, PII Protection & Purposeful Cl
 
     const turnstileBot = await verifyTurnstileToken(undefined, 'INVALID_BOT_TOKEN');
     expect(turnstileBot.verified).toBe(false);
+  });
+
+  it('synchronizes 3-Tier Neon PostgreSQL warehouse state (Raw, Clean, Marts & MAD Outlier review)', async () => {
+    const overview = await getWarehouseSyncOverview();
+    expect(overview.tierCounts.tier1RawCount).toBeGreaterThanOrEqual(5);
+    expect(overview.tierCounts.tier2CleanCount).toBeGreaterThanOrEqual(7);
+    expect(overview.tierCounts.tier3MartsCount).toBeGreaterThanOrEqual(10);
+
+    const martsRes = await queryWeeklyMartsFromWarehouse(undefined, 'bok_choy');
+    expect(martsRes.marts.length).toBeGreaterThanOrEqual(4);
+
+    const reviewRes = await updateOutlierReviewInWarehouse(undefined, 106, 'reject');
+    expect(reviewRes.updated).toBe(true);
+    expect(reviewRes.newStatus).toBe('rejected');
+
+    const rawInsert = await insertRawFarmerLogInWarehouse(
+      undefined,
+      'htx_an_phu_tan',
+      { cropCode: 'bok_choy', plantedAreaM2: 2000 },
+      'hash_test_farmer_log'
+    );
+    expect(rawInsert.rawRecordId).toBeGreaterThan(0);
   });
 });

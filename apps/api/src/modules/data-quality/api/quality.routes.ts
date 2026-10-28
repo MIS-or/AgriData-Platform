@@ -1,7 +1,12 @@
 import { Hono } from 'hono';
 import { runDailyDataQualityCheck, DailyQualityCheckRow } from '../application/data-quality-checker.js';
+import { Env } from '../../../core/config/env.js';
+import {
+  queryCleanPricesFromWarehouse,
+  updateOutlierReviewInWarehouse,
+} from '../../../core/database/neon-client.js';
 
-export const qualityRouter = new Hono();
+export const qualityRouter = new Hono<{ Bindings: Env }>();
 
 const manualReviewQueue = new Map<string, { status: string; reviewedBy?: string; reviewedAt?: string }>();
 
@@ -29,6 +34,18 @@ qualityRouter.get('/audit', (c) => {
   });
 });
 
+// GET /api/v1/quality/clean-prices - Lấy danh sách giá sạch Tier-2 & hàng đợi ngoại lệ MAD từ Neon PostgreSQL
+qualityRouter.get('/clean-prices', async (c) => {
+  const result = await queryCleanPricesFromWarehouse(c.env);
+  return c.json({
+    success: true,
+    dataSource: result.source,
+    count: result.rows.length,
+    outliersCount: result.rows.filter((r) => r.isOutlier).length,
+    rows: result.rows,
+  });
+});
+
 // POST /api/v1/quality/review-outlier - Thẩm định và xử lý hàng đợi ngoại lệ duyệt tay (Mã việc 2.5)
 qualityRouter.post('/review-outlier', async (c) => {
   const body = await c.req.json() as { recordId: string; decision: 'approve' | 'reject'; reviewer: string };
@@ -42,10 +59,14 @@ qualityRouter.post('/review-outlier', async (c) => {
     reviewedAt: new Date().toISOString(),
   });
 
+  const dbUpdate = await updateOutlierReviewInWarehouse(c.env, body.recordId, body.decision);
+
   return c.json({
     success: true,
     recordId: body.recordId,
     decision: body.decision,
+    newStatus: dbUpdate.newStatus,
+    dataSource: dbUpdate.source,
     message: `Đã ${body.decision === 'approve' ? 'chấp thuận' : 'từ chối'} dòng dữ liệu ngoại lệ #${body.recordId}.`,
   });
 });
