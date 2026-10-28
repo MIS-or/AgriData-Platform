@@ -1,4 +1,4 @@
-﻿import { z } from 'zod';
+import { z } from 'zod';
 
 export type B2BSubscriptionTier = 'FREE_TRIAL' | 'COOP_STANDARD' | 'ENTERPRISE';
 
@@ -37,6 +37,37 @@ export interface RegionalExpansionPlan {
   launchTargetDateIso: string;
   budgetVnd: number;
   status: 'PLANNING' | 'SURVEYING' | 'READY';
+}
+
+export interface CloudflareFreeServiceSpec {
+  serviceId:
+    | 'CLOUDFLARE_PAGES'
+    | 'CLOUDFLARE_WORKERS_CRON'
+    | 'CLOUDFLARE_D1_SQL'
+    | 'CLOUDFLARE_WORKERS_KV'
+    | 'CLOUDFLARE_R2_STORAGE'
+    | 'CLOUDFLARE_HYPERDRIVE'
+    | 'CLOUDFLARE_WORKERS_AI'
+    | 'CLOUDFLARE_VECTORIZE'
+    | 'CLOUDFLARE_ANALYTICS_ENGINE'
+    | 'CLOUDFLARE_TURNSTILE';
+  serviceName: string;
+  bindingName: string;
+  freeTierQuota: string;
+  currentUsageSummary: string;
+  utilizationPercent: number;
+  purposeInAgriData: string;
+  monthlyCostVnd: number; // Always 0 VND on Free Tier
+  status: 'ACTIVE_EDGE' | 'ACTIVE_LOCAL_FALLBACK';
+}
+
+export interface CloudflareFreeTierSuiteReport {
+  totalServicesConfigured: number;
+  activeServicesCount: number;
+  totalMonthlyCostVnd: number;
+  isZeroWasteOptimized: boolean;
+  services: CloudflareFreeServiceSpec[];
+  evaluatedAtIso: string;
 }
 
 export interface InfrastructureCostAudit {
