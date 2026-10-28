@@ -1,0 +1,56 @@
+# ====================================================================
+# AgriData Platform - Docker Ignore Rules
+# Strictly prevents secrets (.env) and local state from entering image layers
+# ====================================================================
+
+# Git & CI
+.git
+.gitignore
+.github
+
+# Dependencies & Build Outputs
+node_modules
+**/node_modules
+dist
+**/dist
+.wrangler
+**/.wrangler
+coverage
+.nyc_output
+
+# Secrets & Environment Variables (NEVER bake secrets into Docker image!)
+.env
+.env.*
+**/.env
+**/.env.*
+!/.env.example
+.dev.vars
+.dev.vars.*
+**/.dev.vars
+**/.dev.vars.*
+*.local
+*.local.env
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+id_rsa*
+id_ecdsa*
+id_ed25519*
+secrets.json
+credentials.json
+wrangler.toml.local
+
+# Documentation, Context & Editor Files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+*.log
+logs
+docs
+context
+tools
+

@@ -1,0 +1,75 @@
+# ====================================================================
+# AgriData Platform - Docker Compose (Test, Staging & Local Prod)
+# Single Source of Truth for Secrets: Root `/.env` file ONLY
+# ====================================================================
+
+services:
+  # 1. 3-Tier Data Warehouse Simulation (PostgreSQL 16 Alpine -> Raw / Clean / Marts)
+  postgres-warehouse:
+    image: postgres:16-alpine
+    container_name: agridata-postgres-warehouse
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-agridata}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-agridata_local_test_pwd}
+      POSTGRES_DB: ${POSTGRES_DB:-neondb}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./apps/api/src/core/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - postgres_warehouse_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-agridata} -d $${POSTGRES_DB:-neondb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Modular Monolith Edge API (Hono / Cloudflare Workers Runtime)
+  api:
+    build:
+      context: .
+      target: api-runner
+    container_name: agridata-edge-api
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    ports:
+      - "${API_PORT:-8787}:8787"
+    depends_on:
+      postgres-warehouse:
+        condition: service_healthy
+
+  # 3. Frontend Farmer PWA & Analytics Dashboard (Nginx Production Server)
+  web:
+    build:
+      context: .
+      target: web-runner
+    container_name: agridata-web-pwa
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      - api
+
+  # 4. Isolated Test & Architecture Verification Runner
+  # Usage: docker compose --profile test run --rm test-runner
+  test-runner:
+    build:
+      context: .
+      target: test
+    container_name: agridata-test-runner
+    profiles:
+      - test
+    env_file:
+      - ./.env
+    depends_on:
+      postgres-warehouse:
+        condition: service_healthy
+
+volumes:
+  postgres_warehouse_data:
+
