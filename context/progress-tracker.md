@@ -1,4 +1,4 @@
-﻿# Progress Tracker: 8 Giai Đoạn & 8 Cổng Quyết Định
+# Progress Tracker: 8 Giai Đoạn & 8 Cổng Quyết Định
 
 > **Quy ước trạng thái**:
 > - `NOT_STARTED`: Chưa bắt đầu
@@ -135,3 +135,13 @@
 | **X5** | Tài liệu & Chuyển giao | `COMPLETED` | `docs/production-runbook.md`, từ điển chỉ số `metrics.ts`, từ điển 15 nguồn cào `sources.ts` |
 | **X6** | Theo dõi rủi ro & Chi phí hạ tầng | `COMPLETED` | Đảm bảo 100% chi phí vận hành hàng tháng = 0 VNĐ trên gói Cloudflare Free Tier |
 
+
+---
+
+## Cập nhật Kiến trúc Modular Monolith, Bảo mật `.env` & Docker CI/CD (2026-10-28)
+| Hạng mục | Trạng thái | Bằng chứng kỹ thuật |
+|---|---|---|
+| **Single Root `.env` & Secret Isolation** | `COMPLETED` | Duy nhất `/.env` (git-ignored) & `/.env.example` tại root; xóa toàn bộ `.env` con; `vite.config.ts` (`envDir: '../../'`) & `wrangler` đọc trực tiếp từ root |
+| **Modular Monolith Boundaries** | `COMPLETED` | Tái cấu trúc `apps/api/src/modules/*` thành 6 Bounded Contexts độc lập (`ingestion`, `data-quality`, `market-intelligence`, `farmer-advisory`, `field-experiment`, `platform-ops`) + `core` |
+| **Automated Boundary & Secret Scanner** | `COMPLETED` | `scripts/verify-architecture.mjs` tích hợp trực tiếp vào `pnpm test` và CI/CD |
+| **Multi-Stage Docker & CI/CD Pipeline** | `COMPLETED` | `Dockerfile` (6 stages), `docker-compose.yml` (Postgres 16 3-Tier Warehouse + API + Web + Test Runner), `.dockerignore`, `.github/workflows/ci.yml` |

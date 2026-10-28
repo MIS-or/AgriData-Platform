@@ -3,7 +3,7 @@ import {
   CROP_DICTIONARY,
   CropCode,
 } from '@agridata/contracts';
-import { AnalyticsDashboard } from './features/dashboard/AnalyticsDashboard.js';
+import { AnalyticsDashboard } from './modules/analytics-dashboard/index.js';
 
 export default function App() {
   const [viewMode, setViewMode] = useState<'farmer' | 'dashboard'>('farmer');

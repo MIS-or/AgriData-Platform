@@ -1,22 +1,18 @@
-﻿import { Hono } from 'hono';
+import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { CROP_DICTIONARY, CropCode } from '@agridata/contracts';
-import { evaluateFarmerRecommendation } from './services/rule-engine.js';
-import { sourcesRouter } from './routes/sources.js';
-import { ingestRouter } from './routes/ingest.js';
-import { martsRouter } from './routes/marts.js';
-import { qualityRouter } from './routes/quality.js';
-import { modelsRouter } from './routes/models.js';
-import { farmerRouter } from './routes/farmer.js';
-import { fieldAuditRouter } from './routes/field-audit.js';
-import { operationsRouter } from './routes/operations.js';
-import { fetchOpenMeteoWeather } from './services/weather.js';
+import { Env, resolveEnvSecret } from './core/config/env.js';
 
-export interface Env {
-  DB?: any;          // Cloudflare D1
-  KV_CACHE?: any;    // Cloudflare KV
-  NEON_DATABASE_URL?: string;
-}
+// Import strictly through each Bounded Context's Public Facade (`./modules/<module>/index.js`)
+import { sourcesRouter, ingestRouter, fetchOpenMeteoWeather } from './modules/ingestion/index.js';
+import { qualityRouter, martsRouter } from './modules/data-quality/index.js';
+import { modelsRouter } from './modules/market-intelligence/index.js';
+import { farmerRouter, evaluateFarmerRecommendation } from './modules/farmer-advisory/index.js';
+import { fieldAuditRouter } from './modules/field-experiment/index.js';
+import { operationsRouter } from './modules/platform-ops/index.js';
+
+export type { Env };
+export { resolveEnvSecret };
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -38,9 +34,9 @@ app.use('*', cors({
   maxAge: 86400,
 }));
 
-// Production Global Error Handler
+// Production Global Error Handler (Never leaks secrets or stack traces)
 app.onError((err, c) => {
-  console.error(`[EDGE API ERROR] ${err.message}`, err.stack);
+  console.error(`[EDGE API ERROR] ${err.message}`);
   return c.json({
     success: false,
     error: 'Internal Server Error',
@@ -60,15 +56,18 @@ app.notFound((c) => {
 });
 
 app.get('/health', (c) => {
+  const mode = resolveEnvSecret(c.env, 'NODE_ENV') || 'production';
   return c.json({
     status: 'ok',
     service: 'agridata-edge-api',
+    architecture: 'modular-monolith',
+    environment: mode,
     platform: 'cloudflare-workers-free-tier',
     timestamp: new Date().toISOString(),
   });
 });
 
-// Gắn các sub-routers
+// Mount 6 Independent Bounded Context Routers
 app.route('/api/v1/sources', sourcesRouter);
 app.route('/api/v1/ingest', ingestRouter);
 app.route('/api/v1/marts', martsRouter);
@@ -141,7 +140,7 @@ app.get('/api/v1/recommendations/farmer', (c) => {
 // Cloudflare Scheduled Worker (Cron Trigger handler)
 export default {
   fetch: app.fetch,
-  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+  async scheduled(_event: ScheduledEvent, _env: Env, _ctx: ExecutionContext) {
     console.log(`[CRON] Scheduled price crawler triggered at ${new Date().toISOString()}`);
   },
 };
