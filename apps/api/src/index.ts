@@ -20,12 +20,44 @@ export interface Env {
 
 const app = new Hono<{ Bindings: Env }>();
 
+// Security Headers Middleware
+app.use('*', async (c, next) => {
+  await next();
+  c.header('X-Content-Type-Options', 'nosniff');
+  c.header('X-Frame-Options', 'DENY');
+  c.header('X-XSS-Protection', '1; mode=block');
+  c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+});
+
 // Enable CORS for Cloudflare Pages frontend
 app.use('*', cors({
   origin: '*',
-  allowMethods: ['GET', 'POST', 'OPTIONS'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
+  exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+  maxAge: 86400,
 }));
+
+// Production Global Error Handler
+app.onError((err, c) => {
+  console.error(`[EDGE API ERROR] ${err.message}`, err.stack);
+  return c.json({
+    success: false,
+    error: 'Internal Server Error',
+    message: err.message,
+    timestamp: new Date().toISOString(),
+  }, 500);
+});
+
+// Production 404 Handler
+app.notFound((c) => {
+  return c.json({
+    success: false,
+    error: 'Endpoint Not Found',
+    path: c.req.path,
+    documentation: 'https://github.com/Joyce/AgriData-Platform/docs',
+  }, 404);
+});
 
 app.get('/health', (c) => {
   return c.json({
