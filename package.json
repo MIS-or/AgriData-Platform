@@ -1,15 +1,19 @@
-﻿{
+{
   "name": "agridata-platform",
   "version": "0.1.0",
   "private": true,
-  "description": "Nền tảng dữ liệu nông sản và đề xuất trồng trọt - Hosted on Cloudflare Free Tier",
+  "description": "Nền tảng dữ liệu nông sản và đề xuất trồng trọt - Modular Monolith on Cloudflare Free Tier",
   "scripts": {
     "dev:web": "pnpm --filter @agridata/web dev",
     "dev:api": "pnpm --filter @agridata/api dev",
     "build": "pnpm --filter @agridata/contracts build && pnpm --filter @agridata/web build && pnpm --filter @agridata/api build",
-    "test": "pnpm --filter @agridata/contracts test && pnpm --filter @agridata/api test",
+    "test": "node scripts/verify-architecture.mjs && pnpm --filter @agridata/contracts test && pnpm --filter @agridata/api test",
+    "audit:architecture": "node scripts/verify-architecture.mjs",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
+    "docker:up": "docker compose up --build -d",
+    "docker:down": "docker compose down",
+    "docker:test": "docker compose --profile test run --rm test-runner",
     "deploy:pages": "pnpm --filter @agridata/web deploy",
     "deploy:worker": "pnpm --filter @agridata/api deploy"
   },
